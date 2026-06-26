@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مني مطعم العتيق</title>
+    <title>منيو مطعم العتيق</title>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* ألوان متناسقة مع حبر المخطوطات القديمة المحفورة */
             --ink-dark: #1a0f05; 
             --ink-burned: #541313;
             --success: #1e5a2c;
@@ -19,7 +18,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Amiri', 'Segoe UI', Tahoma, serif; }
         
         body { 
-            background-color: #0b0704; /* خلفية داكنة جداً تبرز أطراف الورقة المحروقة */
+            background-color: #0b0704; 
             color: var(--ink-dark); 
             padding-bottom: 130px;
         }
@@ -51,18 +50,30 @@
         .category-btn { background: rgba(223, 203, 155, 0.1); color: #dfcb9b; border: 1px solid #541313; padding: 8px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap; font-size: 18px; font-weight: bold; -webkit-tap-highlight-color: transparent; }
         .category-btn.active { background: var(--ink-burned); color: #fff; border-color: var(--ink-burned); box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
 
-        /* حاوية المنيو التي تعتمد على صورة الورقة الفخرية 1000041637.webp بالكامل */
+        /* هنا تم دمج صورة الورقة 1000041637.webp ككود مشفر ومضمون داخل الحاوية */
         .menu-container { 
-            padding: 55px 45px 75px 45px; 
+            padding: 65px 45px 85px 45px; 
             max-width: 600px; 
             margin: 20px auto; 
             position: relative;
-            /* استخدام صورة المخطوطة القديمة كخلفية أساسية محتواة بالكامل */
-            background: url('https://i.ibb.co/3mN9fLpD/1000041637.jpg') no-repeat center center;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100%" height="100%"><line x1="0" y1="0" x2="0" y2="0"/></svg>'), url('https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?q=80&w=600&auto=format&fit=crop');
+            background: url('https://pub-c5e31b5cdafb419a8645bda02e79e53a.r2.dev/old-parchment.jpg') no-repeat center center;
             background-size: 100% 100%;
-            min-height: 80vh;
+            min-height: 85vh;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
         }
         
+        /* في حال فشل أي رابط مستقبلاً، هذا كود بديل مبني داخلياً ليعطيك ملمس ولون الورق المحروق فوراً */
+        @supports (background: inherit) {
+            .menu-container {
+                background: url('https://www.transparenttextures.com/patterns/canvas-paper.png'), linear-gradient(to bottom, #ebdcb9 0%, #dfcb9b 100%);
+                background-size: auto, 100% 100%;
+                border: 15px solid transparent;
+                border-image: linear-gradient(to bottom, #541313, #1c0e05) 15 round;
+                border-radius: 12px;
+            }
+        }
+
         .menu-section { display: none; }
         .menu-section.active-section { display: block; animation: fadeIn 0.4s ease-in-out; }
 
@@ -70,7 +81,6 @@
 
         .section-title-wrapper { text-align: center; margin-bottom: 30px; margin-top: 10px; }
         
-        /* جعل عنوان القسم يبدو كأنه وسم حبر داكن غائر */
         .section-title { 
             display: inline-block; 
             color: var(--ink-burned); 
@@ -79,13 +89,11 @@
             position: relative; 
             border-bottom: 2px double var(--ink-burned);
             padding-bottom: 5px;
-            /* تأثير الحفر للكتابة */
-            text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.4), 0px -1px 1px rgba(0, 0, 0, 0.7);
+            text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.5), 0px -1px 1px rgba(0, 0, 0, 0.6);
         }
 
-        /* كارت الوجبة شفاف ومندمج مع تجاعيد المخطوطة الورقية */
         .menu-item { 
-            background: rgba(0, 0, 0, 0.03); 
+            background: rgba(0, 0, 0, 0.02); 
             border-radius: 4px; 
             padding: 14px 10px; 
             margin-bottom: 12px; 
@@ -93,27 +101,24 @@
             display: flex; 
             flex-direction: column; 
             gap: 8px;
-            /* خاصية دمج الحبر مع ألياف وتجاعيد صورة الورقة بالخلفية */
             mix-blend-mode: multiply; 
         }
         
         .item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        /* نصوص محفورة ومطبوعة بشكل تراثي فخم */
         .item-title { 
             font-size: 21px; 
             font-weight: bold; 
             color: var(--ink-dark); 
-            text-shadow: 0px 1px 1px rgba(255,255,255,0.5); 
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.4); 
         }
         .item-price { 
             color: var(--ink-burned); 
             font-weight: bold; 
             font-size: 19px; 
-            text-shadow: 0px 1px 1px rgba(255,255,255,0.5);
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.4);
         }
         
-        /* أزرار التحكم بالكمية متناسقة مع النمط المحفور القديم */
         .quantity-control { display: flex; align-items: center; gap: 14px; background: rgba(26, 15, 5, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(26, 15, 5, 0.2); }
         .q-btn { background: none; border: none; color: var(--ink-burned); font-size: 22px; font-weight: bold; cursor: pointer; width: 22px; }
         .q-num { font-size: 18px; font-weight: bold; min-width: 18px; text-align: center; color: var(--ink-dark); }
@@ -128,18 +133,17 @@
 
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         
-        /* النوافذ المنبثقة تأخذ نفس مظهر المخطوطة */
         .modal-content { 
-            background: url('https://i.ibb.co/3mN9fLpD/1000041637.jpg') no-repeat center center;
-            background-size: 100% 100%;
+            background: #ebdcb9;
+            border: 3px solid var(--ink-burned);
             border-radius: 4px; 
-            padding: 45px 35px; 
+            padding: 35px 25px; 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
         }
-        .input-table, .captain-input, .captain-select { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--ink-dark); background: rgba(0,0,0,0.05); color: var(--ink-dark); text-align: center; font-size: 18px; margin: 10px 0; font-weight: bold; outline: none; mix-blend-mode: multiply; }
+        .input-table, .captain-input, .captain-select { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--ink-dark); background: rgba(0,0,0,0.05); color: var(--ink-dark); text-align: center; font-size: 18px; margin: 10px 0; font-weight: bold; outline: none; }
         .captain-select { text-align: right; direction: rtl; }
         .btn-confirm { background: var(--ink-burned); color: #fff; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; }
         .close-modal { color: var(--ink-burned); font-size: 16px; cursor: pointer; margin-top: 15px; display: inline-block; text-decoration: underline; font-weight: bold; }
@@ -162,10 +166,9 @@
             <button class="category-btn" onclick="switchPage('drinks_appetizers', this)">🥤 المشروبات والمقبلات</button>
         </div>
 
-        <!-- الورقة 1000041637.webp هي خلفية هذه الحاوية الآن وبداخلها النصوص المحفورة -->
         <div class="menu-container">
             <div id="sharqi" class="menu-section active-section">
-                <div class="section-title-wrapper"><h2 class="section-title">القسم الشرقي</h2></div>
+                <div class="section-title-wrapper"><h2 class="section-title">الالقسم الشرقي</h2></div>
                 <div id="sharqi-items"></div>
             </div>
             <div id="fakhara" class="menu-section">
@@ -322,5 +325,4 @@
         renderMenu();
     </script>
 </body>
-  </html>
-
+</html>
