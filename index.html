@@ -1,1 +1,326 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو مطعم العتيق</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* ألوان متناسقة مع حبر المخطوطات القديمة المحفورة */
+            --ink-dark: #1a0f05; 
+            --ink-burned: #541313;
+            --success: #1e5a2c;
+            --danger: #a62424;
+            --info: #205072;
+            --wood-dark: #1c0e05;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Amiri', 'Segoe UI', Tahoma, serif; }
+        
+        body { 
+            background-color: #0b0704; /* خلفية داكنة جداً تبرز أطراف الورقة المحروقة */
+            color: var(--ink-dark); 
+            padding-bottom: 130px;
+        }
+        
+        .restaurant-header { 
+            text-align: center; 
+            padding: 30px 20px; 
+            background: var(--wood-dark); 
+            color: #ebdcb9;
+            border-bottom: 3px solid var(--ink-burned);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .restaurant-name { font-size: 32px; font-weight: bold; color: #dfcb9b; text-shadow: 1px 1px 2px #000; }
+        .restaurant-info { font-size: 15px; color: #a4926d; margin-top: 6px; }
+
+        .categories-nav { 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            padding: 15px 20px; 
+            position: sticky; 
+            top: 0; 
+            background: #110c08;
+            z-index: 100; 
+            border-bottom: 2px dashed var(--ink-burned); 
+            scrollbar-width: none; 
+        }
+        .categories-nav::-webkit-scrollbar { display: none; }
+        .category-btn { background: rgba(223, 203, 155, 0.1); color: #dfcb9b; border: 1px solid #541313; padding: 8px 20px; border-radius: 4px; cursor: pointer; white-space: nowrap; font-size: 18px; font-weight: bold; -webkit-tap-highlight-color: transparent; }
+        .category-btn.active { background: var(--ink-burned); color: #fff; border-color: var(--ink-burned); box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
+
+        /* حاوية المنيو التي تعتمد على صورة الورقة الفخرية 1000041637.webp بالكامل */
+        .menu-container { 
+            padding: 55px 45px 75px 45px; 
+            max-width: 600px; 
+            margin: 20px auto; 
+            position: relative;
+            /* استخدام صورة المخطوطة القديمة كخلفية أساسية محتواة بالكامل */
+            background: url('https://i.ibb.co/3mN9fLpD/1000041637.jpg') no-repeat center center;
+            background-size: 100% 100%;
+            min-height: 80vh;
+        }
+        
+        .menu-section { display: none; }
+        .menu-section.active-section { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .section-title-wrapper { text-align: center; margin-bottom: 30px; margin-top: 10px; }
+        
+        /* جعل عنوان القسم يبدو كأنه وسم حبر داكن غائر */
+        .section-title { 
+            display: inline-block; 
+            color: var(--ink-burned); 
+            font-size: 24px; 
+            font-weight: bold; 
+            position: relative; 
+            border-bottom: 2px double var(--ink-burned);
+            padding-bottom: 5px;
+            /* تأثير الحفر للكتابة */
+            text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.4), 0px -1px 1px rgba(0, 0, 0, 0.7);
+        }
+
+        /* كارت الوجبة شفاف ومندمج مع تجاعيد المخطوطة الورقية */
+        .menu-item { 
+            background: rgba(0, 0, 0, 0.03); 
+            border-radius: 4px; 
+            padding: 14px 10px; 
+            margin-bottom: 12px; 
+            border-bottom: 1px dashed rgba(26, 15, 5, 0.3); 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+            /* خاصية دمج الحبر مع ألياف وتجاعيد صورة الورقة بالخلفية */
+            mix-blend-mode: multiply; 
+        }
+        
+        .item-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
+        /* نصوص محفورة ومطبوعة بشكل تراثي فخم */
+        .item-title { 
+            font-size: 21px; 
+            font-weight: bold; 
+            color: var(--ink-dark); 
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.5); 
+        }
+        .item-price { 
+            color: var(--ink-burned); 
+            font-weight: bold; 
+            font-size: 19px; 
+            text-shadow: 0px 1px 1px rgba(255,255,255,0.5);
+        }
+        
+        /* أزرار التحكم بالكمية متناسقة مع النمط المحفور القديم */
+        .quantity-control { display: flex; align-items: center; gap: 14px; background: rgba(26, 15, 5, 0.08); padding: 2px 10px; border-radius: 4px; border: 1px solid rgba(26, 15, 5, 0.2); }
+        .q-btn { background: none; border: none; color: var(--ink-burned); font-size: 22px; font-weight: bold; cursor: pointer; width: 22px; }
+        .q-num { font-size: 18px; font-weight: bold; min-width: 18px; text-align: center; color: var(--ink-dark); }
+
+        .captain-actions { display: flex; gap: 8px; border-top: 1px dashed rgba(26, 15, 5, 0.2); padding-top: 8px; width: 100%; }
+        .btn-captain-edit { background: var(--info); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-captain-del { background: var(--danger); color: white; border: none; padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: bold; cursor: pointer; }
+
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--wood-dark); border-top: 3px solid var(--ink-burned); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; z-index: 99; box-shadow: 0 -4px 10px rgba(0,0,0,0.5); }
+        .cart-bar span { color: #dfcb9b; font-size: 16px; }
+        .btn-order { background: var(--success); color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        
+        /* النوافذ المنبثقة تأخذ نفس مظهر المخطوطة */
+        .modal-content { 
+            background: url('https://i.ibb.co/3mN9fLpD/1000041637.jpg') no-repeat center center;
+            background-size: 100% 100%;
+            border-radius: 4px; 
+            padding: 45px 35px; 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7); 
+        }
+        .input-table, .captain-input, .captain-select { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--ink-dark); background: rgba(0,0,0,0.05); color: var(--ink-dark); text-align: center; font-size: 18px; margin: 10px 0; font-weight: bold; outline: none; mix-blend-mode: multiply; }
+        .captain-select { text-align: right; direction: rtl; }
+        .btn-confirm { background: var(--ink-burned); color: #fff; border: none; padding: 12px 25px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; }
+        .close-modal { color: var(--ink-burned); font-size: 16px; cursor: pointer; margin-top: 15px; display: inline-block; text-decoration: underline; font-weight: bold; }
+        
+        .admin-trigger { text-align: center; margin: 25px 0; }
+        .admin-link { color: #dfcb9b; font-size: 15px; font-weight: bold; text-decoration: underline; cursor: pointer; opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+    <div id="main-app">
+        <div class="restaurant-header">
+            <div class="restaurant-name">مطعم العتيق</div>
+            <div class="restaurant-info">📍 بغداد - بسمايا | 🕒 الأصالة العراقية والنكهة الفريدة</div>
+        </div>
+
+        <div class="categories-nav">
+            <button class="category-btn active" onclick="switchPage('sharqi', this)">🍛 القسم الشرقي</button>
+            <button class="category-btn" onclick="switchPage('fakhara', this)">🥩 الفخارات والدليمية</button>
+            <button class="category-btn" onclick="switchPage('drinks_appetizers', this)">🥤 المشروبات والمقبلات</button>
+        </div>
+
+        <!-- الورقة 1000041637.webp هي خلفية هذه الحاوية الآن وبداخلها النصوص المحفورة -->
+        <div class="menu-container">
+            <div id="sharqi" class="menu-section active-section">
+                <div class="section-title-wrapper"><h2 class="section-title">القسم الشرقي</h2></div>
+                <div id="sharqi-items"></div>
+            </div>
+            <div id="fakhara" class="menu-section">
+                <div class="section-title-wrapper"><h2 class="section-title">الفخارات والدليمية</h2></div>
+                <div id="fakhara-items"></div>
+            </div>
+            <div id="drinks_appetizers" class="menu-section">
+                <div class="section-title-wrapper"><h2 class="section-title">المشروبات والمقبلات</h2></div>
+                <div id="drinks_appetizers-items"></div>
+            </div>
+        </div>
+
+        <div class="admin-trigger"><span class="admin-link" onclick="openCaptainPanel()">⚙️ لوحة تحكم الكابتن (إضافة وتعديل الأسعار والمنتجات)</span></div>
+
+        <div class="cart-bar">
+            <div><span>إجمالي الحساب:</span><div id="cart-total" style="font-size: 22px; font-weight: bold; color: #dfcb9b;">0 د.ع</div></div>
+            <button class="btn-order" onclick="openCheckoutModal()">إرسال الطلب عبر الواتساب 🛒</button>
+        </div>
+    </div>
+
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--ink-burned); font-weight: bold;">تأكيد الطلب 🧾</h3>
+            <p style="margin-top: 10px; color: var(--ink-dark); font-weight: bold;">إجمالي الحساب: <span id="modal-total" style="color: var(--ink-burned); font-weight: bold;">0</span> د.ع</p>
+            <input type="number" id="table-number" class="input-table" placeholder="اكتب رقم طاولتك هنا" required>
+            <button class="btn-confirm" onclick="sendOrderToWhatsApp()">تأكيد وإرسال للمطعم</button>
+            <span class="close-modal" onclick="closeCheckoutModal()">إلغاء</span>
+        </div>
+    </div>
+
+    <div id="captain-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: var(--ink-burned); margin-bottom: 10px; font-weight: bold;">إدارة قوائم الطعام ⚙️</h3>
+            <input type="hidden" id="edit-item-id">
+            <label style="display:block; text-align:right; font-size:14px; color:var(--ink-dark); font-weight: bold;">اختر القسم:</label>
+            <select id="item-category" class="captain-select">
+                <option value="sharqi">🍛 القسم الشرقي</option>
+                <option value="fakhara">🥩 الفخارات والدليمية</option>
+                <option value="drinks_appetizers">🥤 المشروبات والمقبلات</option>
+            </select>
+            <input type="text" id="item-name" class="captain-input" placeholder="اسم المنتج">
+            <input type="number" id="item-price" class="captain-input" placeholder="السعر بالدينار العراقي">
+            <button class="btn-confirm" onclick="saveCaptainChanges()">حفظ وتحديث الصنف ✅</button>
+            <span class="close-modal" onclick="closeCaptainPanel()">إغلاق التعديل</span>
+        </div>
+    </div>
+
+    <script>
+        const WHATSAPP_NUMBER = "9647748841353", CAPTAIN_PASSWORD = "1234"; 
+        const defaultMenuData = { sharqi: [], fakhara: [], drinks_appetizers: [] };
+
+        let menuData;
+        try {
+            let localData = localStorage.getItem('hlem_bismayah_menu');
+            if (localData && localData.trim() !== "" && localData !== "undefined") {
+                menuData = JSON.parse(localData);
+                if(!menuData.sharqi) menuData = defaultMenuData;
+            } else { menuData = defaultMenuData; localStorage.setItem('hlem_bismayah_menu', JSON.stringify(defaultMenuData)); }
+        } catch(e) { menuData = defaultMenuData; }
+
+        let cart = {}, allItemsFlattened = {}, isCaptainMode = false;
+
+        function renderMenu() {
+            allItemsFlattened = {}; 
+            for (let category in menuData) {
+                const container = document.getElementById(`${category}-items`);
+                if (!container) continue; container.innerHTML = "";
+                if (menuData[category] && menuData[category].length > 0) {
+                    menuData[category].forEach(item => {
+                        allItemsFlattened[item.id] = item; 
+                        const div = document.createElement('div'); div.className = "menu-item";
+                        div.innerHTML = `
+                            <div class="item-row">
+                                <div><div class="item-title">${item.name}</div><div class="item-price">${item.price.toLocaleString()} د.ع</div></div>
+                                <div class="quantity-control">
+                                    <button class="q-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                                    <span class="q-num" id="qty-${item.id}">${cart[item.id] || 0}</span>
+                                    <button class="q-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                                </div>
+                            </div>
+                            ${isCaptainMode ? `<div class="captain-actions"><button class="btn-captain-edit" onclick="setupEditItem('${category}', ${item.id})">تعديل ✏️</button><button class="btn-captain-del" onclick="deleteItem('${category}', ${item.id})">حذف 🗑️</button></div>` : ''}
+                        `;
+                        container.appendChild(div);
+                    });
+                } else { container.innerHTML = `<p style="color:var(--ink-burned); font-size:17px; font-weight:bold; text-align:center; padding:40px 20px;">القائمة فارغة حالياً.<br>اضغط على لوحة التحكم بالأسفل لإدخال الأصناف.</p>`; }
+            }
+        }
+
+        function switchPage(sectionId, element) {
+            document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active-section'));
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            const selectedSection = document.getElementById(sectionId); if (selectedSection) selectedSection.classList.add('active-section');
+            if (element) element.classList.add('active'); window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        function updateQty(id, change) {
+            if (!cart[id]) cart[id] = 0; cart[id] += change; if (cart[id] <= 0) delete cart[id];
+            const qtyLabel = document.getElementById(`qty-${id}`); if (qtyLabel) qtyLabel.innerText = cart[id] || 0; updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            let total = 0; for (let id in cart) { if(allItemsFlattened[id]) total += cart[id] * allItemsFlattened[id].price; }
+            document.getElementById('cart-total').innerText = total.toLocaleString() + " د.ع"; document.getElementById('modal-total').innerText = total.toLocaleString();
+        }
+
+        function openCaptainPanel() {
+            if (!isCaptainMode) {
+                let checkPass = prompt("يرجى إدخال رمز دخول الكابتن:");
+                if (checkPass === CAPTAIN_PASSWORD) { isCaptainMode = true; alert("تم تفعيل وضع الكابتن!"); renderMenu(); } else { alert("الرمز خاطئ!"); return; }
+            }
+            document.getElementById('captain-modal').style.display = 'flex';
+        }
+        function closeCaptainPanel() { document.getElementById('captain-modal').style.display = 'none'; resetCaptainForm(); }
+        function resetCaptainForm() { document.getElementById('edit-item-id').value = ""; document.getElementById('item-name').value = ""; document.getElementById('item-price').value = ""; }
+
+        function setupEditItem(category, id) {
+            let item = menuData[category].find(p => p.id === id);
+            if(item) {
+                document.getElementById('edit-item-id').value = item.id; document.getElementById('item-category').value = category;
+                document.getElementById('item-name').value = item.name; document.getElementById('item-price').value = item.price;
+                document.getElementById('captain-modal').style.display = 'flex';
+            }
+        }
+
+        function saveCaptainChanges() {
+            const id = document.getElementById('edit-item-id').value, category = document.getElementById('item-category').value;
+            const name = document.getElementById('item-name').value, price = parseInt(document.getElementById('item-price').value);
+            if(!name || !price) { alert("يرجى ملء الحقول المطلوبة!"); return; }
+            if(id) {
+                for (let cat in menuData) { menuData[cat] = menuData[cat].filter(p => p.id != id); }
+                menuData[category].push({ id: parseInt(id), name, price });
+            } else { menuData[category].push({ id: Date.now(), name, price }); }
+            localStorage.setItem('hlem_bismayah_menu', JSON.stringify(menuData)); alert("تم حفظ التعديل بنجاح!"); closeCaptainPanel(); renderMenu(); updateCartTotal();
+        }
+
+        function deleteItem(category, id) {
+            if(confirm("هل أنت متأكد من حذف هذا الصنف نهائياً؟")) { menuData[category] = menuData[category].filter(p => p.id !== id); if(cart[id]) delete cart[id]; localStorage.setItem('hlem_bismayah_menu', JSON.stringify(menuData)); renderMenu(); updateCartTotal(); }
+        }
+
+        function openCheckoutModal() {
+            let total = 0; for (let id in cart) total += cart[id]; if (total === 0) { alert("الرجاء إضافة وجبات أولاً!"); return; }
+            document.getElementById('checkout-modal').style.display = 'flex';
+        }
+        function closeCheckoutModal() { document.getElementById('checkout-modal').style.display = 'none'; }
+
+        function sendOrderToWhatsApp() {
+            const tableNum = document.getElementById('table-number').value; if (!tableNum) { alert("يجب إدخال رقم الطاولة!"); return; }
+            let itemsDetails = [], total = 0;
+            for (let id in cart) { if(allItemsFlattened[id]) { itemsDetails.push(`• ${allItemsFlattened[id].name} (عدد ${cart[id]})`); total += cart[id] * allItemsFlattened[id].price; } }
+            let textMessage = `🔔 *طلب جديد من مطعم العتيق* 🔔\n\n📍 *طاولة رقم:* ${tableNum}\n📝 *الطلبات:*\n${itemsDetails.join('\n')}\n\n💰 *الحساب الكلي:* ${total.toLocaleString()} د.ع\n⏰ *الوقت:* ${new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}`;
+            closeCheckoutModal(); window.location.href = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(textMessage)}`;
+        }
+
+        renderMenu();
+    </script>
+</body>
+  </html>
 
