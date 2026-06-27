@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COFFEE ALCAPTAIN | منيو الكابتن</title>
-    <!-- استدعاء خط Cairo للعربية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -12,7 +11,7 @@
     <style>
         :root {
             --bg-color: #0b0b0b;
-            --card-bg: rgba(28, 28, 30, 0.85);
+            --card-bg: rgba(28, 28, 30, 0.45); /* زيادة الشفافية للأصناف لتظهر الخلفية */
             --primary-orange: #ff5100;
             --primary-yellow: #ffcc00;
             --text-beige: #f5f5f7;
@@ -41,15 +40,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop'); /* خلفية مقهى طبيعية مظلمة */
+            background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            opacity: 0.12; /* شفافة جداً ومدمجة مع السواد لعدم التشويش */
+            opacity: 0.15; /* زيادة البروز قليلاً لتبدو طبيعية وعميقة خلف الشفافية */
             z-index: -2;
             pointer-events: none;
         }
 
-        /* كانفاس الدخان الحقيقي المتطور */
+        /* كانفاس حركة تصاعد الدخان الحقيقي */
         #smoke-canvas {
             position: fixed;
             top: 0;
@@ -58,38 +57,29 @@
             height: 100%;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.45;
+            opacity: 0.5;
         }
 
         header {
             text-align: center;
-            padding: 40px 20px 20px 20px;
+            padding: 50px 20px 30px 20px;
             position: relative;
         }
 
-        .brand-title {
-            font-size: 34px;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: var(--primary-orange);
-            letter-spacing: 1px;
-            text-shadow: 
-                0 0 10px rgba(255, 81, 0, 0.6),
-                0 0 20px rgba(255, 81, 0, 0.4),
-                2px 2px 4px rgba(0, 0, 0, 0.8);
-            margin-bottom: 5px;
-        }
-
+        /* تعديل الاسم وتكبيره وتوهجه بعد إلغاء العنوان القديم */
         .brand-subtitle {
-            font-size: 22px;
-            color: var(--primary-yellow);
+            font-size: 38px;
+            color: var(--primary-orange);
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+            letter-spacing: 2px;
+            text-shadow: 
+                0 0 12px rgba(255, 81, 0, 0.7),
+                0 0 25px rgba(255, 81, 0, 0.4),
+                2px 2px 5px rgba(0, 0, 0, 0.9);
         }
 
-        /* أزرار الأقسام */
+        /* بار الأقسام الشفاف بالكامل */
         .categories-container {
             display: flex;
             justify-content: center;
@@ -97,52 +87,55 @@
             padding: 15px;
             position: sticky;
             top: 0;
-            background: rgba(11, 11, 11, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(11, 11, 11, 0.45); /* جعل بار الأقسام شفافاً مدمجاً مع الدخان */
+            backdrop-filter: blur(15px); /* زيادة تأثير الضباب وجمالية التصفح */
+            -webkit-backdrop-filter: blur(15px);
             z-index: 10;
-            border-bottom: 1px solid rgba(255, 81, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 81, 0, 0.15);
             overflow-x: auto;
         }
 
         .cat-btn {
-            background: var(--card-bg);
+            background: rgba(28, 28, 30, 0.6);
             color: var(--text-beige);
-            border: 1px solid rgba(255, 204, 0, 0.3);
+            border: 1px solid rgba(255, 204, 0, 0.25);
             padding: 10px 20px;
             border-radius: 30px;
             font-weight: 700;
             cursor: pointer;
             white-space: nowrap;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .cat-btn.active, .cat-btn:hover {
             background: linear-gradient(135deg, var(--primary-orange), var(--primary-yellow));
             color: #000;
             border-color: transparent;
-            box-shadow: 0 0 15px rgba(255, 81, 0, 0.4);
+            box-shadow: 0 0 15px rgba(255, 81, 0, 0.5);
         }
 
         /* حاوية المنتجات */
         .menu-container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 25px auto;
             padding: 0 15px;
         }
 
-        /* كارت الوجبة */
+        /* كارت الوجبة وتأثير الشفافية الفخم (Glassmorphism) */
         .item-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(245, 245, 247, 0.05);
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: relative;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 25px rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px); /* ضبابي شفاف تظهر حركة الدخان من خلفه */
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         .item-info {
@@ -163,6 +156,7 @@
             font-weight: 900;
             color: var(--primary-yellow);
             text-transform: uppercase;
+            text-shadow: 0 0 4px rgba(255, 204, 0, 0.2);
         }
 
         .ar-name {
@@ -172,9 +166,10 @@
         }
 
         .item-price {
-            font-size: 18px;
+            font-size: 19px;
             color: var(--primary-orange);
             font-weight: 700;
+            text-shadow: 0 0 4px rgba(255, 81, 0, 0.2);
         }
 
         /* أزرار الكابتن */
@@ -203,7 +198,7 @@
             font-weight: 700;
         }
 
-        /* لوحة التحكم الإدارية */
+        /* لوحة التحكم الإدارية المحدثة */
         .captain-panel {
             position: fixed;
             bottom: 0;
@@ -281,36 +276,28 @@
 </head>
 <body>
 
-    <!-- طبقة صورة الأراغيل والأجواء الطبيعية الشفافة في الخلفية -->
     <div class="shisha-background"></div>
 
-    <!-- كانفاس حركة تصاعد الدخان الحقيقي -->
     <canvas id="smoke-canvas"></canvas>
 
-    <!-- الهيدر -->
     <header>
-        <div class="brand-title">MENU DYNAMIC</div>
         <div class="brand-subtitle">COFFEE ALCAPTAIN</div>
     </header>
 
-    <!-- بار الأقسام -->
     <div class="categories-container">
         <button class="cat-btn active" onclick="switchCategory('shisha')">💨 الأراغيل</button>
         <button class="cat-btn" onclick="switchCategory('cold')">🍹 المشروبات الباردة</button>
         <button class="cat-btn" onclick="switchCategory('hot')">☕ المشروبات الساخنة</button>
     </div>
 
-    <!-- حاوية المنيو الرئيسي -->
     <div class="menu-container" id="menu-items-wrapper"></div>
 
-    <!-- زر تفعيل وضع الكابتن -->
     <button class="toggle-captain-btn" onclick="toggleCaptainMode()">⚙️ وضع الكابتن</button>
 
-    <!-- لوحة تحكم الإدارة والكابتن -->
     <div class="captain-panel" id="captainPanel">
         <div class="captain-panel-header">
             <h3 style="color: var(--primary-yellow);">لوحة التحكم والتعديل السريع</h3>
-            <span style="font-size: 12px; color: #aaa;">فريق منيو داينمك</span>
+            <span style="font-size: 12px; color: #aaa;">إدارة الكافيه</span>
         </div>
         <div class="form-grid">
             <input type="text" id="prodEnName" placeholder="الاسم بالإنكليزي (مثال: DOUBLE APPLE)">
@@ -347,7 +334,7 @@
             const filtered = menuData.filter(item => item.cat === currentCategory);
 
             if(filtered.length === 0) {
-                wrapper.innerHTML = `<p style="text-align:center; padding:30px; color:#666;">لا توجد منتجات في هذا القسم حالياً.</p>`;
+                wrapper.innerHTML = `<p style="text-align:center; padding:30px; color:#aaa;">لا توجد منتجات في هذا القسم حالياً.</p>`;
                 return;
             }
 
@@ -447,7 +434,7 @@
             document.getElementById('prodPrice').value = '';
         }
 
-        // ==================== محرك تأثير الدخان الطبيعي والأكثر كثافة ====================
+        // ==================== محرك تأثير الدخان الطبيعي المتطور ====================
         const canvas = document.getElementById('smoke-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -458,7 +445,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        const partyCount = 35; // تم زيادة الكثافة ليعطي طابع الدخان الطبيعي
+        const partyCount = 35;
         const particles = [];
 
         class SmokeParticle {
@@ -468,7 +455,7 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + Math.random() * 150;
-                this.size = Math.random() * 120 + 60; // حجم السحابة أكبر لتبدو طبيعية
+                this.size = Math.random() * 120 + 60;
                 this.speedY = -(Math.random() * 0.5 + 0.25);
                 this.speedX = Math.random() * 0.4 - 0.2;
                 this.opacity = Math.random() * 0.18 + 0.05;
@@ -485,7 +472,6 @@
             draw() {
                 ctx.beginPath();
                 let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-                // ألوان دخان واقعية طبيعية متناسقة مع التوهج البرتقالي للمحل
                 gradient.addColorStop(0, `rgba(240, 240, 245, ${this.opacity})`);
                 gradient.addColorStop(0.3, `rgba(255, 110, 20, ${this.opacity * 0.25})`);
                 gradient.addColorStop(1, 'rgba(11, 11, 11, 0)');
