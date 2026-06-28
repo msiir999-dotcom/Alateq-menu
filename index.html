@@ -6,12 +6,16 @@
     <title>COFFEE ALCAPTAIN | منيو الكابتن</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=400;700;900&display=swap" rel="stylesheet">
     
+    <!-- إضافة مكتبات Firebase الرسمية أونلاين لتشغيل السيرفر -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         :root {
             --bg-color: #0b0b0b;
-            --card-bg: rgba(28, 28, 30, 0.45); /* زيادة الشفافية للأصناف لتظهر الخلفية */
+            --card-bg: rgba(28, 28, 30, 0.45);
             --primary-orange: #ff5100;
             --primary-yellow: #ffcc00;
             --text-beige: #f5f5f7;
@@ -33,7 +37,6 @@
             position: relative;
         }
 
-        /* طبقة الأراغيل الطبيعية الشفافة في الخلفية */
         .shisha-background {
             position: fixed;
             top: 0;
@@ -43,12 +46,11 @@
             background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
-            opacity: 0.15; /* زيادة البروز قليلاً لتبدو طبيعية وعميقة خلف الشفافية */
+            opacity: 0.15;
             z-index: -2;
             pointer-events: none;
         }
 
-        /* كانفاس حركة تصاعد الدخان الحقيقي */
         #smoke-canvas {
             position: fixed;
             top: 0;
@@ -66,7 +68,6 @@
             position: relative;
         }
 
-        /* تعديل الاسم وتكبيره وتوهجه بعد إلغاء العنوان القديم */
         .brand-subtitle {
             font-size: 38px;
             color: var(--primary-orange);
@@ -79,7 +80,6 @@
                 2px 2px 5px rgba(0, 0, 0, 0.9);
         }
 
-        /* بار الأقسام الشفاف بالكامل */
         .categories-container {
             display: flex;
             justify-content: center;
@@ -87,8 +87,8 @@
             padding: 15px;
             position: sticky;
             top: 0;
-            background: rgba(11, 11, 11, 0.45); /* جعل بار الأقسام شفافاً مدمجاً مع الدخان */
-            backdrop-filter: blur(15px); /* زيادة تأثير الضباب وجمالية التصفح */
+            background: rgba(11, 11, 11, 0.45);
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             z-index: 10;
             border-bottom: 1px solid rgba(255, 81, 0, 0.15);
@@ -115,14 +115,12 @@
             box-shadow: 0 0 15px rgba(255, 81, 0, 0.5);
         }
 
-        /* حاوية المنتجات */
         .menu-container {
             max-width: 600px;
             margin: 25px auto;
             padding: 0 15px;
         }
 
-        /* كارت الوجبة وتأثير الشفافية الفخم (Glassmorphism) */
         .item-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -133,7 +131,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            backdrop-filter: blur(12px); /* ضبابي شفاف تظهر حركة الدخان من خلفه */
+            backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
@@ -172,7 +170,6 @@
             text-shadow: 0 0 4px rgba(255, 81, 0, 0.2);
         }
 
-        /* أزرار الكابتن */
         .captain-actions {
             display: none;
             gap: 8px;
@@ -198,7 +195,6 @@
             font-weight: 700;
         }
 
-        /* لوحة التحكم الإدارية المحدثة */
         .captain-panel {
             position: fixed;
             bottom: 0;
@@ -267,17 +263,11 @@
             border-color: transparent;
             box-shadow: 0 0 10px var(--primary-orange);
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
 
     <div class="shisha-background"></div>
-
     <canvas id="smoke-canvas"></canvas>
 
     <header>
@@ -313,20 +303,40 @@
     </div>
 
     <script>
-        // البيانات الافتراضية
-        let defaultMenu = [
-            { id: 1, en: "Double Apple", ar: "تفاحتين نخلة", price: "7,000", cat: "shisha" },
-            { id: 2, en: "Gum & Mint", ar: "علكة ونعناع", price: "6,000", cat: "shisha" },
-            { id: 3, en: "Lemon Mint", ar: "ليمون ونعناع عصير", price: "4,500", cat: "cold" },
-            { id: 4, en: "Iced Latte", ar: "آيس لاتيه", price: "5,000", cat: "cold" },
-            { id: 5, en: "Turkish Coffee", ar: "قهوة تركية", price: "3,000", cat: "hot" },
-            { id: 6, en: "Mix Tea", ar: "شاي مخدر هيل", price: "1,500", cat: "hot" }
-        ];
+        // ربط الكود بالرابط المباشر لقاعدة البيانات الخاصة بك في ملف 1000042202.png
+        const firebaseConfig = {
+            databaseURL: "https://cofe1-6d9c5-default-rtdb.firebaseio.com/"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database().ref("menu_items");
 
-        let menuData = JSON.parse(localStorage.getItem('dynamic_menu_data')) || defaultMenu;
+        let menuData = [];
         let currentCategory = 'shisha';
         let isCaptainMode = false;
         let editTargetId = null;
+
+        // جلب البيانات الحية أونلاين من السيرفر فوراً وعند أي تعديل
+        db.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // تحويل البيانات من السيرفر إلى مصفوفة ليعمل الكود بسلاسة
+                menuData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            } else {
+                // إذا كان السيرفر فارغاً في أول تشغيل، يرفع الأصناف الافتراضية تلقائياً
+                const defaultMenu = [
+                    { en: "Double Apple", ar: "تفاحتين نخلة", price: "7,000", cat: "shisha" },
+                    { en: "Gum & Mint", ar: "علكة ونعناع", price: "6,000", cat: "shisha" },
+                    { en: "Lemon Mint", ar: "ليمون ونعناع عصير", price: "4,500", cat: "cold" },
+                    { en: "Iced Latte", ar: "آيس لاتيه", price: "5,000", cat: "cold" },
+                    { en: "Turkish Coffee", ar: "قهوة تركية", price: "3,000", cat: "hot" },
+                    { en: "Mix Tea", ar: "شاي مخدر هيل", price: "1,500", cat: "hot" }
+                ];
+                defaultMenu.forEach(item => db.push(item));
+                return;
+            }
+            renderMenu();
+        });
 
         function renderMenu() {
             const wrapper = document.getElementById('menu-items-wrapper');
@@ -350,8 +360,8 @@
                         <div class="item-price">${item.price} د.ع</div>
                     </div>
                     <div class="captain-actions" style="display: ${isCaptainMode ? 'flex' : 'none'}">
-                        <button class="btn-edit" onclick="prepEdit(${item.id})">تعديل</button>
-                        <button class="btn-delete" onclick="deleteItem(${item.id})">حذف</button>
+                        <button class="btn-edit" onclick="prepEdit('${item.id}')">تعديل</button>
+                        <button class="btn-delete" onclick="deleteItem('${item.id}')">حذف</button>
                     </div>
                 `;
                 wrapper.appendChild(card);
@@ -366,6 +376,15 @@
         }
 
         function toggleCaptainMode() {
+            // حماية بسيطة بطلب رمز القفل عند فتح لوحة التحكم
+            if (!isCaptainMode) {
+                let password = prompt("الرجاء إدخال رمز قفل الكابتن للدخول إلى لوحة الإدارة:");
+                if (password !== "0000") {
+                    alert("الرمز غير صحيح يا كابتن!");
+                    return;
+                }
+            }
+
             isCaptainMode = !isCaptainMode;
             const btn = document.querySelector('.toggle-captain-btn');
             const panel = document.getElementById('captainPanel');
@@ -396,16 +415,14 @@
             const price = parseFloat(priceNum).toLocaleString('en-US');
 
             if(editTargetId) {
-                menuData = menuData.map(item => item.id === editTargetId ? {id: editTargetId, en, ar, price, cat} : item);
-                editTargetId = null;
+                // تحديث المنتج الحالي على السيرفر أونلاين
+                firebase.database().ref("menu_items/" + editTargetId).set({ en, ar, price, cat })
+                .then(() => { editTargetId = null; clearForm(); });
             } else {
-                const newId = menuData.length > 0 ? Math.max(...menuData.map(o => o.id)) + 1 : 1;
-                menuData.push({ id: newId, en, ar, price, cat });
+                // إضافة منتج جديد تماماً إلى السيرفر أونلاين
+                db.push({ en, ar, price, cat })
+                .then(() => { clearForm(); });
             }
-
-            localStorage.setItem('dynamic_menu_data', JSON.stringify(menuData));
-            clearForm();
-            renderMenu();
         }
 
         function prepEdit(id) {
@@ -421,10 +438,9 @@
         }
 
         function deleteItem(id) {
-            if(confirm('هل أنت متأكد من حذف هذا المنتج نهائياً من المنيو؟')) {
-                menuData = menuData.filter(item => item.id !== id);
-                localStorage.setItem('dynamic_menu_data', JSON.stringify(menuData));
-                renderMenu();
+            if(confirm('هل أنت متأكد من حذف هذا المنتج نهائياً من المنيو والسيرفر؟')) {
+                // حذف المنتج من السيرفر فوراً
+                firebase.database().ref("menu_items/" + id).remove();
             }
         }
 
@@ -495,8 +511,6 @@
             requestAnimationFrame(animateSmoke);
         }
         animateSmoke();
-
-        renderMenu();
     </script>
 </body>
 </html>
