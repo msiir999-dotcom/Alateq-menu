@@ -65,7 +65,7 @@
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
         }
 
-        .cat-btn:hover, .item-card:hover, .toggle-captain-btn:hover {
+        .cat-btn:hover, .item-card:hover {
             transform: translateY(-4px) scale(1.01);
             box-shadow: var(--shadow-premium) !important;
         }
@@ -86,7 +86,7 @@
             background: linear-gradient(135deg, var(--primary-navy) 0%, #1c3c66 100%);
             color: #F6F2E8;
             border: none;
-            padding: 16px 60px;
+            padding: 16px 40px;
             font-size: 16px;
             font-weight: 700;
             border-radius: 30px;
@@ -95,6 +95,8 @@
             border: 2px solid var(--accent-gold);
             position: relative;
             overflow: hidden;
+            width: 90%;
+            max-width: 280px;
         }
 
         .btn-enter-menu:hover {
@@ -113,7 +115,7 @@
             justify-content: flex-start;
             align-items: center;
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             border: 14px solid var(--primary-navy);
             overflow-y: auto;
@@ -145,6 +147,7 @@
             overflow: hidden;
             border: 4px solid var(--primary-navy);
             box-shadow: 0 10px 30px rgba(19, 42, 73, 0.15);
+            flex-shrink: 0; /* يمنع الدائرة من التحول لنصف دائرة أو الانضغاط على الهاتف */
         }
 
         .logo-wrapper img {
@@ -167,14 +170,17 @@
         }
 
         .splash-brand {
-            font-size: 32px;
+            font-size: 28px; /* تصغير طفيف ليناسب الهاتف */
             color: var(--primary-navy);
             margin-bottom: 5px;
             letter-spacing: 1px;
             border-bottom: 2px solid var(--accent-gold);
             padding-bottom: 8px;
-            width: 80%;
+            width: 85%;
             max-width: 320px;
+            white-space: nowrap; /* إجبار النص أن يظل بسطر واحد */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* 🟦 المستطيل النيلي الفخم للأصناف داخل الشاشة الترحيبية */
@@ -234,6 +240,7 @@
             border-radius: 50%;
             border: 3px solid var(--primary-navy);
             box-shadow: 0 6px 15px rgba(19, 42, 73, 0.1);
+            flex-shrink: 0;
         }
 
         .header-logo-wrapper img {
@@ -456,54 +463,70 @@
             cursor: pointer;
         }
 
+        /* ⚙️ تحديث تصميم زر وضع الكابتن المدمج والصغير جداً بأسفل الشاشة */
         .toggle-captain-btn {
             position: fixed;
-            bottom: 25px; left: 25px;
-            background: var(--white);
-            border: 2px solid var(--primary-navy);
-            color: var(--primary-navy);
-            padding: 12px 20px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: bold;
+            bottom: 20px; 
+            left: 20px;
+            background: var(--primary-navy);
+            border: 2px solid var(--accent-gold);
+            color: var(--bg-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%; /* شكل دائري مدمج */
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
             z-index: 101;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(19, 42, 73, 0.3);
         }
 
         .toggle-captain-btn.active {
-            background: var(--primary-navy);
-            color: var(--bg-color);
+            background: #ff3b30; /* يتحول للأحمر في وضع التعديل للتنبيه */
+            border-color: var(--white);
+            color: var(--white);
+        }
+
+        /* إضافة توافقية خطوط الهواتف عند تعديل العرض التلقائي */
+        @media (max-width: 360px) {
+            .splash-brand {
+                font-size: 24px;
+            }
+            .welcome-aboard {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- الشاشة الترحيبية الاحترافية -->
+    <!-- الشاشة الترحيبية الاحترافية المحدثة -->
     <div class="welcome-splash" id="welcomeSplash">
         <div class="logo-wrapper">
             <img src="https://ibb.co/5X2wz2QH" alt="ALCAPTAIN COFFEE">
         </div>
         <div class="splash-brand">ALCAPTAIN COFFEE</div>
-        <h2 class="welcome-aboard">رحلة مذاق لا تنسى</h2>
-        <p class="welcome-desc">يسعدنا وجودك معنا في الكابتن كافيه، نقدم لك تجربة مميزة من أشهى الأطباق والمشروبات المحضرة بعناية فائقة.</p>
+        <h2 class="welcome-aboard">أهلاً وسهلاً بك!</h2>
+        <p class="welcome-desc">يسعدنا وجودك معنا في كابتن، نقدم لك تجربة مميزة من أشهى الأطباق والمشروبات المحضرة بعناية فائقة.</p>
         
         <!-- 🟦 مستطيل الأصناف النيلي الفخم -->
         <div class="splash-categories-panel shimmer-effect">
             <div class="splash-cat-title">💫 أصناف المنيو الفاخرة</div>
             <div class="splash-cat-grid">
-                <div class="splash-cat-item"> الكريب</div>
-                <div class="splash-cat-item"> الوافل</div>
-                <div class="splash-cat-item"> الأراغيل</div>
-                <div class="splash-cat-item"> الموهيتو</div>
-                <div class="splash-cat-item"> العصائر</div>
-                <div class="splash-cat-item"> الحلويات</div>
-                <div class="splash-cat-item"> مشروبات باردة</div>
-                <div class="splash-cat-item"> مشروبات ساخنة</div>
+                <div class="splash-cat-item">🥞 الكريب</div>
+                <div class="splash-cat-item">🧇 الوافل</div>
+                <div class="splash-cat-item">💨 الأراغيل</div>
+                <div class="splash-cat-item">🍹 الموهيتو</div>
+                <div class="splash-cat-item">🥤 العصائر</div>
+                <div class="splash-cat-item">🍰 الحلويات</div>
+                <div class="splash-cat-item">❄️ مشروبات باردة</div>
+                <div class="splash-cat-item">🔥 مشروبات ساخنة</div>
             </div>
         </div>
 
-        <button class="btn-enter-menu" onclick="dismissSplash()">عرض المنيو </button>
+        <button class="btn-enter-menu" onclick="dismissSplash()">عرض المنيو الملكي</button>
     </div>
 
     <!-- هيدر التطبيق -->
@@ -517,14 +540,14 @@
 
     <!-- بار الأقسام الرئيسي لجميع الأصناف المحدثة -->
     <div class="categories-container">
-        <button class="cat-btn active" onclick="switchCategory('crepe', event)"> الكريب</button>
-        <button class="cat-btn" onclick="switchCategory('waffle', event)"> الوافل</button>
-        <button class="cat-btn" onclick="switchCategory('shisha', event)"> الأراغيل</button>
-        <button class="cat-btn" onclick="switchCategory('mojito', event)"> الموهيتو</button>
-        <button class="cat-btn" onclick="switchCategory('juices', event)"> العصائر</button>
-        <button class="cat-btn" onclick="switchCategory('sweets', event)"> الحلويات</button>
-        <button class="cat-btn" onclick="switchCategory('cold', event)"> المشروبات الباردة</button>
-        <button class="cat-btn" onclick="switchCategory('hot', event)"> المشروبات الساخنة</button>
+        <button class="cat-btn active" onclick="switchCategory('crepe', event)">🥞 الكريب</button>
+        <button class="cat-btn" onclick="switchCategory('waffle', event)">🧇 الوافل</button>
+        <button class="cat-btn" onclick="switchCategory('shisha', event)">💨 الأراغيل</button>
+        <button class="cat-btn" onclick="switchCategory('mojito', event)">🍹 الموهيتو</button>
+        <button class="cat-btn" onclick="switchCategory('juices', event)">🥤 العصائر</button>
+        <button class="cat-btn" onclick="switchCategory('sweets', event)">🍰 الحلويات</button>
+        <button class="cat-btn" onclick="switchCategory('cold', event)">❄️ المشروبات الباردة</button>
+        <button class="cat-btn" onclick="switchCategory('hot', event)">🔥 المشروبات الساخنة</button>
     </div>
 
     <div class="menu-container" id="menu-items-wrapper"></div>
@@ -536,7 +559,8 @@
         </div>
     </footer>
 
-    <button class="toggle-captain-btn" onclick="toggleCaptainMode()">⚙️ وضع الكابتن</button>
+    <!-- الزر المدمج الدائري الجديد بأسفل الشاشة -->
+    <button class="toggle-captain-btn" onclick="toggleCaptainMode()">⚙️</button>
 
     <div class="captain-panel" id="captainPanel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
