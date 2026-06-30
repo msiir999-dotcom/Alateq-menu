@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COFFEE ALCAPTAIN | منيو الكابتن</title>
     
+    <!-- استدعاء خطوط جوجل المطلوبة للتصميم -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
@@ -19,7 +20,7 @@
             --primary-navy: #132A49;      /* الكحلي الداكن الفخم للعناوين والأسماء */
             --text-gray: #7F7B82;         /* الرمادي المتوازن للأوصاف والأسعار والتفاصيل */
             --white: #FFFFFF;             /* الأبيض للعناصر التفاعلية والخلفيات الفرعية */
-            --glow-color: rgba(19, 42, 73, 0.6); /* لون التوهج النيلي الداكن */
+            --glow-color: rgba(19, 42, 73, 0.4); /* لون التوهج النيلي */
         }
 
         * {
@@ -59,25 +60,35 @@
             font-family: "Noto Sans Arabic", sans-serif !important;
         }
 
-        /* ----- ✨ تأثير الهالة الضوئية والوميض المنبثق للخارج (Glow / Outbox Shadow) ----- */
+        /* ----- ✨ تأثير الوميض والتوهج الفوري بمجرد مرور الإصبع أو الماوس ----- */
         .cat-btn, .item-card, .btn-enter-menu, .btn-add-item, .toggle-captain-btn {
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            transition: all 0.3s ease;
         }
 
-        /* التأثير عند وضع الإصبع والضغط على الأزرار أو الأقسام أو كروت الطعام */
+        /* عند مرور الماوس أو ملامسة الإصبع الفورية */
+        .cat-btn:hover, .item-card:hover, .btn-enter-menu:hover, .btn-add-item:hover, .toggle-captain-btn:hover,
         .cat-btn:active, .item-card:active, .btn-enter-menu:active, .btn-add-item:active, .toggle-captain-btn:active {
-            transform: scale(0.98); /* ضغطة خفيفة للداخل */
-            box-shadow: 0 0 25px 8px var(--glow-color) !important; /* انبثاق هالة ضوئية نيلية متوهجة للخارج */
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px 6px var(--glow-color) !important;
             z-index: 5;
         }
 
-        /* زيادة بريق الهالة للأزرار النشطة */
-        .cat-btn.active {
-            box-shadow: 0 4px 12px rgba(19, 42, 73, 0.15);
+        /* تأثير نبضي إضافي يخرج من خلف العناصر عند الملامسة */
+        .cat-btn::after, .item-card::after, .btn-enter-menu::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            box-shadow: 0 0 0 0 rgba(19, 42, 73, 0.6);
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
         }
-        .cat-btn.active:active {
-            box-shadow: 0 0 30px 10px rgba(19, 42, 73, 0.8) !important;
+
+        .cat-btn:hover::after, .item-card:hover::after, .btn-enter-menu:hover::after {
+            box-shadow: 0 0 0 12px rgba(19, 42, 73, 0);
+            opacity: 1;
         }
 
         /* ----- تصميم الشاشة الترحيبية ----- */
@@ -371,6 +382,7 @@
 </head>
 <body>
 
+    <!-- الشاشة الترحيبية -->
     <div class="welcome-splash" id="welcomeSplash">
         <div class="logo-wrapper" id="splashLogoContainer">
             <div class="logo-placeholder">☕</div>
@@ -380,6 +392,7 @@
         <button class="btn-enter-menu" onclick="dismissSplash()">عرض المنيو</button>
     </div>
 
+    <!-- رأس الصفحة -->
     <header>
         <div class="header-logo-wrapper" id="headerLogoContainer">
             <div class="logo-placeholder" style="font-size:35px;">☕</div>
