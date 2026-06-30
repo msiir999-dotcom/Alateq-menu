@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COFFEE ALCAPTAIN | منيو الكابتن</title>
     
-    <!-- استدعاء خطوط جوجل المطلوبة للتصميم -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
@@ -57,6 +56,33 @@
         .btn-enter-menu, .btn-add-item, .toggle-captain-btn,
         input, select, button {
             font-family: "Noto Sans Arabic", sans-serif !important;
+        }
+
+        /* ----- تصميم تأثير الوميض النيلي ----- */
+        .cat-btn, .btn-enter-menu, .btn-add-item, .toggle-captain-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-effect 0.5s linear;
+            background-color: rgba(19, 42, 73, 0.25); /* وميض باللون الكحلي/النيلي شفاف */
+            pointer-events: none;
+        }
+
+        /* وميض أبيض مخصص للأزرار ذات الخلفية الداكنة ليظهر بوضوح */
+        .btn-enter-menu .ripple, .btn-add-item .ripple, .cat-btn.active .ripple {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        @keyframes ripple-effect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
         /* ----- تصميم الشاشة الترحيبية ----- */
@@ -352,17 +378,15 @@
 </head>
 <body>
 
-    <!-- الشاشة الترحيبية المحدثة بالكامل -->
     <div class="welcome-splash" id="welcomeSplash">
         <div class="logo-wrapper" id="splashLogoContainer">
             <div class="logo-placeholder">☕</div>
         </div>
         <h2 class="splash-title">رحلة مذاق لا تنسى</h2>
         <div class="splash-brand">COFFEE ALCAPTAIN</div>
-        <button class="btn-enter-menu" onclick="dismissSplash()">عرض المنيو</button>
+        <button class="btn-enter-menu" onclick="dismissSplash(event)">عرض المنيو</button>
     </div>
 
-    <!-- رأس الصفحة المحدث -->
     <header>
         <div class="header-logo-wrapper" id="headerLogoContainer">
             <div class="logo-placeholder" style="font-size:35px;">☕</div>
@@ -388,7 +412,7 @@
         </div>
     </footer>
 
-    <button class="toggle-captain-btn" onclick="toggleCaptainMode()">⚙️ وضع الكابتن</button>
+    <button class="toggle-captain-btn" onclick="toggleCaptainMode(event)">⚙️ وضع الكابتن</button>
 
     <div class="captain-panel" id="captainPanel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -417,20 +441,48 @@
                     <option value="hot">المشروبات الساخنة</option>
                 </select>
             </div>
-            <button class="btn-add-item" onclick="addNewItem()">➕ إضافة / تحديث المنتج</button>
+            <button class="btn-add-item" onclick="addNewItem(event)">➕ إضافة / تحديث المنتج</button>
         </div>
     </div>
 
     <script>
-        function dismissSplash() {
+        // دالة ذكية لإنشاء وميض مائي (Ripple Effect) عند النقر على أي زر
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const ripple = document.createElement("span");
+            ripple.className = "ripple";
+            
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            // إزالة أي وميض سابق لمنع التراكم
+            const oldRipple = button.querySelector(".ripple");
+            if (oldRipple) oldRipple.remove();
+            
+            button.appendChild(ripple);
+        }
+
+        // ربط تأثير الوميض بجميع الأزرار عند تحميل الصفحة
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSavedLogo();
+            const buttons = document.querySelectorAll('.cat-btn, .btn-enter-menu, .btn-add-item, .toggle-captain-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', createRipple);
+            });
+        });
+
+        function dismissSplash(event) {
+            if(event) createRipple(event);
             const splash = document.getElementById('welcomeSplash');
             splash.classList.add('fade-out');
             setTimeout(() => { splash.style.display = 'none'; }, 600);
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            loadSavedLogo();
-        });
 
         function loadSavedLogo() {
             const savedLogo = localStorage.getItem("captain_custom_logo");
@@ -522,13 +574,15 @@
         }
 
         function switchCategory(cat, event) {
+            if(event) createRipple(event);
             currentCategory = cat;
             document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
             if(event && event.target) { event.target.classList.add('active'); }
             renderMenu();
         }
 
-        function toggleCaptainMode() {
+        function toggleCaptainMode(event) {
+            if(event) createRipple(event);
             if (!isCaptainMode) {
                 let password = prompt("الرجاء إدخال رمز قفل الكابتن للدخول إلى لوحة الإدارة:");
                 if (password !== "0000") {
@@ -553,7 +607,8 @@
             renderMenu();
         }
 
-        function addNewItem() {
+        function addNewItem(event) {
+            if(event) createRipple(event);
             const en = document.getElementById('prodEnName').value.trim();
             const ar = document.getElementById('prodArName').value.trim();
             const priceNum = document.getElementById('prodPrice').value.trim();
