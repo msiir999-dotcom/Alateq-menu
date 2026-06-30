@@ -388,7 +388,7 @@
         let isCaptainMode = false;
         let editTargetId = null;
 
-        // --- نظام التخزين المحلي السريع لنصوص الترحيب ---
+        // --- 1. نظام التخزين المحلي السريع لنصوص الترحيب ---
         const localConfig = JSON.parse(localStorage.getItem('alcaptain_splash_cfg'));
         if (localConfig) {
             applySplashTexts(localConfig);
@@ -411,10 +411,19 @@
             }
             if(cfg.thankYou) document.getElementById('spThankYou').innerText = cfg.thankYou;
         }
-        // ------------------------------------------------
+
+        // --- 2. نظام التخزين المحلي السريع للأقسام (حل مشكلة المستطيل الأخضر) ---
+        const localCats = JSON.parse(localStorage.getItem('alcaptain_cats_cfg'));
+        if (localCats) {
+            handleCategoriesUpdate(localCats);
+        }
 
         dbCats.once('value', (snapshot) => {
-            handleCategoriesUpdate(snapshot.val());
+            const catsData = snapshot.val();
+            if (catsData) {
+                localStorage.setItem('alcaptain_cats_cfg', JSON.stringify(catsData));
+                handleCategoriesUpdate(catsData);
+            }
             loadItemsOnce();
         });
 
@@ -504,7 +513,10 @@
 
         function activateLiveListeners() {
             dbCats.on('value', (snapshot) => {
-                handleCategoriesUpdate(snapshot.val());
+                const data = snapshot.val();
+                if(data) localStorage.setItem('alcaptain_cats_cfg', JSON.stringify(data));
+                handleCategoriesUpdate(data);
+                
                 const prodSelect = document.getElementById('prodCat');
                 const pList = document.getElementById('panelCategoriesList');
                 prodSelect.innerHTML = ''; pList.innerHTML = '';
