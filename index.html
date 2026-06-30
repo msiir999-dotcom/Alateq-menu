@@ -290,12 +290,12 @@
 </head>
 <body>
 
-    <!-- ⚓ الشاشة الترحيبية (بخط El Messiri للكل) ⚓ -->
+    <!-- ⚓ الشاشة الترحيبية ⚓ -->
     <div class="welcome-splash" id="welcomeSplash">
         <div class="splash-top-section">
             <div class="top-header" id="spTopHeader">CAPTAIN MENU</div>
             <div class="logo-wrapper">
-                <img src="https://ibb.co/5X2wz2QH" alt="ALCAPTAIN COFFEE" onerror="this.src='https://i.ibb.co/bHGg64v/captain-placeholder.png'">
+                <img src="https://i.ibb.co/bHGg64v/captain-placeholder.png" alt="ALCAPTAIN COFFEE" id="splashLogo">
             </div>
             <div class="welcome-message">
                 <div class="arabic-welcome" id="spArabicWelcome">أهلاً وسهلاً</div>
@@ -305,9 +305,7 @@
         </div>
 
         <div class="splash-bottom-section">
-            <div class="classic-menu-scroller" id="splashCategoriesContainer">
-                <!-- أسماء الأقسام بالإنكليزي والعربي بخط El Messiri تلقائياً -->
-            </div>
+            <div class="classic-menu-scroller" id="splashCategoriesContainer"></div>
             <div class="classic-thankyou" id="spThankYou">Thank You For Sailing With Us</div>
         </div>
     </div>
@@ -315,7 +313,7 @@
     <!-- هيدر التطبيق الرئيسي -->
     <header>
         <div class="header-logo-wrapper">
-            <img src="https://ibb.co/5X2wz2QH" alt="ALCAPTAIN COFFEE">
+            <img src="https://i.ibb.co/bHGg64v/captain-placeholder.png" alt="ALCAPTAIN COFFEE" id="mainLogo">
         </div>
         <h2 class="welcome-title" id="mainWelcomeTitle">WELCOME ABOARD</h2>
         <div class="brand-subtitle">ALCAPTAIN COFFEE</div>
@@ -324,7 +322,7 @@
     <!-- بار الأقسام الرئيسي -->
     <div class="categories-container" id="mainCategoriesBar"></div>
 
-    <!-- حاوية المنتجات (بخط Noto Sans Arabic) -->
+    <!-- حاوية المنتجات -->
     <div class="menu-container" id="menu-items-wrapper"></div>
 
     <footer>
@@ -376,7 +374,7 @@
                 <input type="number" id="prodPrice" placeholder="السعر">
                 <select id="prodCat" style="grid-column: span 2;"></select>
             </div>
-            <button class="btn-add-item" onclick="addNewItem()">➕ إضافة / تحديث المنتج</button>
+            <button class="btn-add-item" id="btnSubmitItem" onclick="addNewItem()">➕ إضافة المنتج الجديد</button>
         </div>
     </div>
 
@@ -400,7 +398,7 @@
         let isCaptainMode = false;
         let editTargetId = null;
 
-        // 📂 مزامنة الأقسام الأساسية وعرضها تلقائياً بالمستطيل وفي بار الأزرار
+        // 📂 مزامنة الأقسام الأساسية وعرضها
         dbCats.on('value', (snapshot) => {
             const data = snapshot.val();
             const splashContainer = document.getElementById('splashCategoriesContainer');
@@ -430,7 +428,7 @@
                 currentCategory = categoriesData[0].id;
             }
 
-            categoriesData.forEach((cat, idx) => {
+            categoriesData.forEach((cat) => {
                 splashContainer.innerHTML += `
                     <div class="classic-category-item">
                         <span class="classic-cat-ar">${cat.ar}</span>
@@ -439,7 +437,7 @@
                 `;
 
                 const activeClass = cat.id === currentCategory ? 'active' : '';
-                mainBar.innerHTML += `<button class="cat-btn ${activeClass}" onclick="switchCategory('${cat.id}', event)">${cat.ar}</button>`;
+                mainBar.innerHTML += `<button class="cat-btn ${activeClass}" data-cat-id="${cat.id}" onclick="switchCategory('${cat.id}')">${cat.ar}</button>`;
                 prodSelect.innerHTML += `<option value="${cat.id}">${cat.ar}</option>`;
                 pList.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; border-bottom:1px solid #eee; padding-bottom:2px;">
@@ -451,14 +449,14 @@
             renderMenu();
         });
 
+        // مزامنة المنتجات
         dbItems.on('value', (snapshot) => {
             const data = snapshot.val();
-            if (data) {
-                menuData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-            }
+            menuData = data ? Object.keys(data).map(key => ({ id: key, ...data[key] })) : [];
             renderMenu();
         });
 
+        // مزامنة نصوص الترحيب
         dbConfig.on('value', (snapshot) => {
             const cfg = snapshot.val();
             if(cfg) {
@@ -477,6 +475,7 @@
             const wrapper = document.getElementById('menu-items-wrapper');
             if(!wrapper) return;
             wrapper.innerHTML = '';
+            
             const filtered = menuData.filter(item => item.cat === currentCategory);
 
             if(filtered.length === 0) {
@@ -488,13 +487,17 @@
                 const card = document.createElement('div');
                 card.className = 'item-card';
                 card.style.animationDelay = `${index * 0.05}s`;
+                
+                // تنسيق وعرض السعر مع فواصل آلاف جمالية للمستخدم فقط
+                const displayPrice = Number(item.price).toLocaleString('en-US');
+
                 card.innerHTML = `
                     <div class="item-header-row">
                         <div class="item-names">
                             <span class="en-name">${item.en}</span>
                             <span class="ar-name">${item.ar}</span>
                         </div>
-                        <div class="price-badge">${item.price} د.ع</div>
+                        <div class="price-badge">${displayPrice} د.ع</div>
                     </div>
                     <div class="captain-actions" style="display: ${isCaptainMode ? 'flex' : 'none'}">
                         <button class="btn-edit" onclick="prepEdit('${item.id}')">تعديل</button>
@@ -524,10 +527,15 @@
             }
         }
 
-        function switchCategory(cat, event) {
-            currentCategory = cat;
-            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
-            if(event && event.target) { event.target.classList.add('active'); }
+        function switchCategory(catId) {
+            currentCategory = catId;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.getAttribute('data-cat-id') === catId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
             renderMenu();
         }
 
@@ -561,12 +569,19 @@
             const cat = document.getElementById('prodCat').value;
 
             if(!en || !ar || !priceNum) { alert('الرجاء ملء كافة الحقول!'); return; }
-            const price = parseFloat(priceNum).toLocaleString('en-US');
+            
+            // تخزين السعر كرقم نقي لضمان سهولة تعديله وجلبه لاحقاً دون مشاكل نصوص
+            const price = parseFloat(priceNum);
 
             if(editTargetId) {
-                firebase.database().ref("menu_items/" + editTargetId).set({ en, ar, price, cat }).then(() => { editTargetId = null; clearForm(); });
+                firebase.database().ref("menu_items/" + editTargetId).set({ en, ar, price, cat }).then(() => { 
+                    editTargetId = null; 
+                    clearForm(); 
+                });
             } else {
-                dbItems.push({ en, ar, price, cat }).then(() => { clearForm(); });
+                dbItems.push({ en, ar, price, cat }).then(() => { 
+                    clearForm(); 
+                });
             }
         }
 
@@ -575,9 +590,12 @@
             if(item) {
                 document.getElementById('prodEnName').value = item.en;
                 document.getElementById('prodArName').value = item.ar;
-                document.getElementById('prodPrice').value = item.price.replace(/,/g, '');
+                document.getElementById('prodPrice').value = item.price; // سيتم جلبه كرقم صافي جاهز للتعديل
                 document.getElementById('prodCat').value = item.cat;
                 editTargetId = id;
+                
+                document.getElementById('btnSubmitItem').innerText = "💾 تحديث بيانات المنتج";
+                document.getElementById('captainPanel').scrollTo({ top: 500, behavior: 'smooth' });
             }
         }
 
@@ -589,6 +607,8 @@
             document.getElementById('prodEnName').value = '';
             document.getElementById('prodArName').value = '';
             document.getElementById('prodPrice').value = '';
+            document.getElementById('btnSubmitItem').innerText = "➕ إضافة المنتج الجديد";
+            editTargetId = null;
         }
     </script>
 </body>
